@@ -1,2 +1,122 @@
 ﻿body {
+    width: auto;
+    height: auto;
 }
+
+/*NavBar*/
+
+.navContainer {
+    width:100%;
+    height: 80px;
+    background-color: #2e2e2e;
+}
+
+.navContainer a {
+    display: block;
+    float: right;
+    color: #ffffff;
+    font-size: 20px;
+    padding-left: 20px;
+    padding-top: 30px;
+    padding-right: 20px;
+    text-align: center;
+}
+
+.headerLogo {
+    left: 0;
+    padding-top: 10px;
+    height: 85%;
+    padding-left: 20px;
+}
+
+.bodyContainer {
+    border: 2px solid black;
+    border-radius: 5px;
+    width: 80%;
+    margin: 0 auto;
+    margin-top: 120px;
+    height: auto;
+    padding-bottom: 50px;
+    position: relative;
+}
+
+.bodyTitle {
+    width: auto;
+    height: 80px;
+    text-decoration: underline;
+    top: 0;
+    font-weight: bold;
+    text-align: left;
+    padding-top: 40px;
+    padding-left: 30px;
+    z-index: 3;
+    font-size: 30px;
+    margin-bottom: 30px;
+}
+
+/*Register Page*/
+
+.registerBody {
+    height: 400px;
+}
+
+.titleStyle {
+    text-decoration: underline;
+    padding-left: 30px;
+}
+
+.givenNames {
+    padding-left: 30px;
+    text-decoration: underline;
+}
+
+.TextBoxInputs {
+    left: 30px;
+    position: relative;
+    margin-top: 20px;
+    top: 0;
+}
+
+.DOBContainer {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.DOBTextBoxes {
+    margin-top: 10px;
+    width: 50px;
+    left: 30px;
+    position: relative;
+}
+
+.phoneContainer {
+    padding-top:20px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.submitButton {
+    right: 30px;
+    position: absolute;
+}
+
+
+/*Staff search page*/
+
+.GridView {
+    margin: 20px;
+}
+
+.GridView th {
+    background-color: #8eb0ed;
+    width: 180px;
+    padding-left: 2px;
+}
+
+.GridView td {
+    background-color: #ebebeb;
+    padding-left: 2px;
+}
+
+
+
