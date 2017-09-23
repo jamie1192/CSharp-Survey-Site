@@ -19,11 +19,9 @@ namespace Survey_Prototype
                 SqlConnection connection = ConnectToDatabase();
                 int nextQuestion = 0;
 
-
                 //load question from database
                 SqlCommand getQuestion = new SqlCommand("SELECT * FROM questionTable WHERE questionTable.q_Id = " + currentQuestion, connection);
 
-                Console.WriteLine(getQuestion);
                 //run query
                 SqlDataReader reader = getQuestion.ExecuteReader();
 
@@ -74,11 +72,12 @@ namespace Survey_Prototype
                         {
                             //TODO if optionReader["fq_Id"] != DBNull.Value, create session list to store followUp
                             ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
+                            //CheckBox cb = new QuestionCheckBoxList(optionReader)
                             int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
-                            item.Value = currentAnswerId.ToString(); //add a_Id to checkbox item value
+                            
                             checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
                         }
-
+                        
                         QuestionPlaceholder.Controls.Add(checkBoxController);
 
                     }
@@ -190,9 +189,30 @@ namespace Survey_Prototype
             //template.Items.
             //Control resultControl = FindControl("checkBoxQuestionController");
 
-            Control resultControl = FindControl("checkBoxQuestionController");
-            Control searchControl1 = this.Controls[0].Controls[3].Controls[1].Controls[1].Controls[1];
-            Response.Redirect("Question.aspx");
+            //test 1
+            //CheckBoxList resultControl = (CheckBoxList)FindControl("checkBoxQuestionController");
+
+            
+            //foreach (ListItem li in (ListItem)resultControl)
+            //{
+            //    if (li.Selected)
+            //    {
+
+            //    }
+            //}
+
+            //test 2
+            //for (int i = 0; i < QuestionPlaceholder.Controls.Count; i++)
+            //{
+            //    if (QuestionPlaceholder.Controls[i].GetType() == typeof(RadioButtonList))
+            //    {
+            //        RadioButtonList myList = (String)QuestionPlaceholder.Controls[i].GetType();           
+            //    }
+            //}
+
+
+                //Control searchControl1 = this.Controls[0].Controls[3].Controls[1].Controls[1].Controls[1];
+                Response.Redirect("Question.aspx");
 
         }
 
