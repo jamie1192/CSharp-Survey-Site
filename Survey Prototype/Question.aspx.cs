@@ -41,8 +41,8 @@ namespace Survey_Prototype
             }
 
             int currentQuestion = GetCurrentQuestionNumber();
-                SqlConnection connection = ConnectToDatabase();
-                int nextQuestion = 0;
+            SqlConnection connection = ConnectToDatabase();
+            int nextQuestion = 0;
 
             if (HttpContext.Current.Session["tempCheckbox"] != null)
             {
@@ -65,36 +65,38 @@ namespace Survey_Prototype
                     //TODO (if reader["nextQuestion_Id"] == DBNull.Value)
                     //bool finishedSurvey = true;
                     nextQuestion = Convert.ToInt32(reader["nextQuestion_Id"]);
-                    //questionText += nextQuestion;               
+                //questionText += nextQuestion;               
 
 
-                    //load the appropriate questionController
-                    if (questionType == 1) //textbox
+                //load the appropriate questionController
+                if (questionType == 1) //textbox
+                {
+
+                    //load TexQuestionController
+                    TextQuestionController textController = (TextQuestionController)LoadControl("~/TextQuestionController.ascx");
+
+                    //set the ID to reference to it later
+                    textController.ID = "TextQuestionController";
+
+                    //Insert the active question into label
+                    textController.QuestionLabel.Text = questionText;
+
+                    //Insert controller to the placeholder
+                    QuestionPlaceholder.Controls.Add(textController);
+                }
+
+                else if (questionType == 2) //checkbox 
+                {
+                    CheckBoxQuestionController checkBoxController = (CheckBoxQuestionController)LoadControl("~/CheckBoxQuestionController.ascx");
+
+                    checkBoxController.ID = "checkBoxQuestionController";
+                    checkBoxController.QuestionLabel.Text = questionText;
+
+                    SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+
+                    //run command
+                    try
                     {
-
-                        //load TexQuestionController
-                        TextQuestionController textController = (TextQuestionController)LoadControl("~/TextQuestionController.ascx");
-
-                        //set the ID to reference to it later
-                        textController.ID = "TextQuestionController";
-
-                        //Insert the active question into label
-                        textController.QuestionLabel.Text = questionText;
-
-                        //Insert controller to the placeholder
-                        QuestionPlaceholder.Controls.Add(textController);
-                    }
-
-                    else if (questionType == 2) //checkbox 
-                    {
-                        CheckBoxQuestionController checkBoxController = (CheckBoxQuestionController)LoadControl("~/CheckBoxQuestionController.ascx");
-
-                        checkBoxController.ID = "checkBoxQuestionController";
-                        checkBoxController.QuestionLabel.Text = questionText;
-
-                        SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
-
-                        //run command
                         SqlDataReader optionReader = optionCommand.ExecuteReader();
 
                         //loop through all results
@@ -103,30 +105,38 @@ namespace Survey_Prototype
                             //TODO if optionReader["fq_Id"] != DBNull.Value, create session list to store followUp
                             ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
                             //CheckBox cb = new QuestionCheckBoxList(optionReader)
-                            
+
                             int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
 
-                        checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
-                        //checkBoxController.QuestionCheckBoxList.Controls.Add(item);
+                            checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
+                                                                                     //checkBoxController.QuestionCheckBoxList.Controls.Add(item);
                             debugList.Items.Add(item);
                         }
-                    HttpContext.Current.Session["tempCheckbox"] = debugList;
-                        
+                        HttpContext.Current.Session["tempCheckbox"] = debugList;
+
                         QuestionPlaceholder.Controls.Add(checkBoxController);
 
-                    
+
                     }
-
-                    else if (questionType == 3) // dropdown
+                    catch (Exception err)
                     {
-                        DropdownQuestionController dropdownController = (DropdownQuestionController)LoadControl("~/DropdownQuestionController.ascx");
+                        Console.Write("Database/connection error" + err);
+                    }
+                }
 
-                        dropdownController.ID = "dropdownQuestionController";
-                        dropdownController.QuestionLabel.Text = questionText;
 
-                        SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+                else if (questionType == 3) // dropdown
+                {
+                    DropdownQuestionController dropdownController = (DropdownQuestionController)LoadControl("~/DropdownQuestionController.ascx");
 
-                        //run command
+                    dropdownController.ID = "dropdownQuestionController";
+                    dropdownController.QuestionLabel.Text = questionText;
+
+                    SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+
+                    //run command
+                    try
+                    {
                         SqlDataReader optionReader = optionCommand.ExecuteReader();
 
                         //loop through all results
@@ -139,6 +149,11 @@ namespace Survey_Prototype
                         //add all retrieved answers to controller
                         QuestionPlaceholder.Controls.Add(dropdownController);
                     }
+                    catch (Exception err)
+                    {
+                        Console.Write("Database/connection error" + err);
+                    }
+                }
 
                     else if (questionType == 4) //radio 
                     {
@@ -150,17 +165,24 @@ namespace Survey_Prototype
                         SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
 
                         //run command
-                        SqlDataReader optionReader = optionCommand.ExecuteReader();
-
-                        //loop through all results
-                        while (optionReader.Read())
+                        try
                         {
-                            ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
-                            radioController.RadioQuestionList.Items.Add(item);
-                            //radioTemplate.Add(item);
-                        }
+                            SqlDataReader optionReader = optionCommand.ExecuteReader();
 
-                        QuestionPlaceholder.Controls.Add(radioController);
+                            //loop through all results
+                            while (optionReader.Read())
+                            {
+                                ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
+                                radioController.RadioQuestionList.Items.Add(item);
+                                //radioTemplate.Add(item);
+                            }
+
+                            QuestionPlaceholder.Controls.Add(radioController);
+                        }
+                        catch (Exception err)
+                        {
+                            Console.Write("Database/connection error: " + err);
+                        }
                     }
 
                 }
@@ -186,11 +208,18 @@ namespace Survey_Prototype
                 SqlConnection connection = ConnectToDatabase();
                 SqlCommand getFirstQuestion = new SqlCommand("SELECT TOP 1 * FROM questionTable; ", connection);
                 Console.WriteLine(getFirstQuestion);
-                SqlDataReader reader = getFirstQuestion.ExecuteReader();
-                while (reader.Read())
+                try
                 {
-                    currentQuestion = Convert.ToInt32(reader["q_Id"]);
-                    HttpContext.Current.Session["questionNumber"] = currentQuestion; //save question to session
+                    SqlDataReader reader = getFirstQuestion.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        currentQuestion = Convert.ToInt32(reader["q_Id"]);
+                        HttpContext.Current.Session["questionNumber"] = currentQuestion; //save question to session
+                    }
+                }
+                catch (Exception err)
+                {
+                    Console.Write("Database/connection error: " + err);
                 }
                 connection.Close();
             }
