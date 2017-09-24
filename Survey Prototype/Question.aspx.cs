@@ -11,13 +11,43 @@ namespace Survey_Prototype
 {
     public partial class Question : System.Web.UI.Page
     {
+        CheckBoxList debugList = new CheckBoxList();
+
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
+           
+            if (IsPostBack) //trying various ways to get survey answers within postback but can't manage to pinpoint
+                            //where each checkbox is within it's parent CheckBoxList..
             {
-                int currentQuestion = GetCurrentQuestionNumber();
+                //template.Items.
+                Control resultControl = FindControl("checkBoxQuestionController");
+
+                //test 1
+                CheckBoxList resultControl2 = (CheckBoxList)FindControl("checkBoxQuestionController");
+
+                //CheckBoxList resultControl3 = (CheckBoxList)FindControl("questionCheckBoxList");
+                CheckBoxList findList = Form.FindControl("checkBoxQuestionController") as CheckBoxList;
+
+                //test 123213
+                CheckBoxList Cbx = (CheckBoxList)QuestionPlaceholder.FindControl("checkBoxQuestionController");
+
+               foreach(ListItem li in QuestionPlaceholder.Controls)
+                {
+                    var value = li.Value;
+                }
+
+                String cbList2 = Request.Form["questionCheckBoxList"];
+
+            }
+
+            int currentQuestion = GetCurrentQuestionNumber();
                 SqlConnection connection = ConnectToDatabase();
                 int nextQuestion = 0;
+
+            if (HttpContext.Current.Session["tempCheckbox"] != null)
+            {
+                debugList = (CheckBoxList)HttpContext.Current.Session["tempCheckbox"];
+            }
 
                 //load question from database
                 SqlCommand getQuestion = new SqlCommand("SELECT * FROM questionTable WHERE questionTable.q_Id = " + currentQuestion, connection);
@@ -73,13 +103,18 @@ namespace Survey_Prototype
                             //TODO if optionReader["fq_Id"] != DBNull.Value, create session list to store followUp
                             ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
                             //CheckBox cb = new QuestionCheckBoxList(optionReader)
-                            int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
                             
-                            checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
+                            int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
+
+                        checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
+                        //checkBoxController.QuestionCheckBoxList.Controls.Add(item);
+                            debugList.Items.Add(item);
                         }
+                    HttpContext.Current.Session["tempCheckbox"] = debugList;
                         
                         QuestionPlaceholder.Controls.Add(checkBoxController);
 
+                    
                     }
 
                     else if (questionType == 3) // dropdown
@@ -132,7 +167,7 @@ namespace Survey_Prototype
 
                 HttpContext.Current.Session["questionNumber"] = nextQuestion;
                 connection.Close();
-            }
+            //}
 
 
 
@@ -178,7 +213,7 @@ namespace Survey_Prototype
             }
             catch (Exception e)
             {
-                Console.WriteLine("I probably dun' goofed: " + e);
+                Console.Write("I probably dun' goofed: " + e);
             }
 
             return connection;
@@ -187,12 +222,17 @@ namespace Survey_Prototype
         protected void SubmitButtonClick(object sender, EventArgs e)
         {
             //template.Items.
-            //Control resultControl = FindControl("checkBoxQuestionController");
+            Control resultControl = FindControl("checkBoxQuestionController");
 
             //test 1
-            //CheckBoxList resultControl = (CheckBoxList)FindControl("checkBoxQuestionController");
+            CheckBoxList resultControl2 = (CheckBoxList)FindControl("checkBoxQuestionController");
 
-            
+            CheckBoxList resultControl3 = (CheckBoxList)FindControl("questionCheckBoxList"); 
+
+            //test 123213
+            CheckBoxList Cbx = (CheckBoxList)QuestionPlaceholder.FindControl("checkBoxQuestionController");
+
+            //CheckBoxList Cb4 = (CheckBoxList)CheckBoxQuestionController.
             //foreach (ListItem li in (ListItem)resultControl)
             //{
             //    if (li.Selected)
@@ -204,9 +244,26 @@ namespace Survey_Prototype
             //test 2
             //for (int i = 0; i < QuestionPlaceholder.Controls.Count; i++)
             //{
-            //    if (QuestionPlaceholder.Controls[i].GetType() == typeof(RadioButtonList))
+            //    if (QuestionPlaceholder.Controls[i].GetType() == typeof(CheckBoxList))
             //    {
-            //        RadioButtonList myList = (String)QuestionPlaceholder.Controls[i].GetType();           
+            //        CheckBoxList myList = QuestionPlaceholder.Controls[i].GetType();
+            //    }
+            //}
+
+            //test 3
+            //foreach (ListItem cbList in QuestionPlaceholder.Controls.("checkBoxQuestionController")
+            //{
+            //    if (cbList.Selected)
+            //    {
+
+            //    }
+            //}
+            //testc 4
+            //foreach (ListItem cb in QuestionPlaceholder.Controls.OfType<ListItem>())
+            //{
+            //    if (cb != null)
+            //    {
+
             //    }
             //}
 

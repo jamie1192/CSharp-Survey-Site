@@ -19,7 +19,7 @@
 
 </head>
 <body>
-    <form runat="server">
+    <form ID="form" runat="server">
         <asp:ScriptManager runat="server">
             <Scripts>
                 <%--To learn more about bundling scripts in ScriptManager see http://go.microsoft.com/fwlink/?LinkID=301884 --%>
@@ -44,9 +44,9 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navContainer">
                 <img class="headerLogo" src="Content/AIT_LOGO_newblue_y9eugb.png" />
-                <a href="#home">Register</a>
-                <a href="#home">Survey</a>
-                <a href="#home">Staff Search</a>
+                <a href="Register.aspx">Register</a>
+                <a href="Question.aspx">Survey</a>
+                <a href="StaffSearch.aspx">Staff Search</a>
             </div>
         </div>
         <div class="container body-content">

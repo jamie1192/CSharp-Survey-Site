@@ -36,7 +36,7 @@
     margin: 0 auto;
     margin-top: 120px;
     height: auto;
-    padding-bottom: 50px;
+    padding-bottom: 30px;
     position: relative;
 }
 
@@ -103,8 +103,16 @@
 
 /*Staff search page*/
 
+.gridViewContainer {
+    margin-top: 90px;
+    bottom: 0;
+    
+    
+}
+
 .GridView {
     margin: 20px;
+    bottom: 0;
 }
 
 .GridView th {
@@ -118,14 +126,45 @@
     padding-left: 2px;
 }
 
+.searchBoxesContainer {
+    width: auto;
+    position: relative;
+    height: auto;
+}
+
+.bankCheckBoxes {
+    height: auto;
+    float: left;
+    width: 140px;
+    padding: 30px;
+}
+
+.genderCheckBoxes {
+    padding: 30px;
+    width: 150px;
+    margin: 0 auto;
+}
+
+.newspapersCheckBoxList {
+    padding: 30px;
+    top: 0;
+    height: auto;
+    float: right;
+}
+
+.staffSearchButton {
+    float: right;
+    margin-right: 30px;
+    margin-top: 30px;
+    
+    
+}
 
 /*Survey Pages*/
-
 .answerOptionContainer {
     margin-top: 10px;
     width: 250px;
     padding-left: 30px;
-    
 }
 
 .buttonContainer {
