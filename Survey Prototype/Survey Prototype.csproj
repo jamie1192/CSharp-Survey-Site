@@ -394,6 +394,7 @@
     <Compile Include="Question.aspx.designer.cs">
       <DependentUpon>Question.aspx</DependentUpon>
     </Compile>
+    <Compile Include="questionData.cs" />
     <Compile Include="RadioQuestionController.ascx.cs">
       <DependentUpon>RadioQuestionController.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

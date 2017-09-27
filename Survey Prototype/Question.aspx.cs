@@ -12,6 +12,7 @@ namespace Survey_Prototype
     public partial class Question : System.Web.UI.Page
     {
         CheckBoxList debugList = new CheckBoxList();
+        int questionType;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -19,7 +20,25 @@ namespace Survey_Prototype
             if (IsPostBack) //trying various ways to get survey answers within postback but can't manage to pinpoint
                             //where each checkbox is within it's parent CheckBoxList..
             {
+
+                string cbID = "questionCheckBoxList";
                 //template.Items.
+
+                CheckBoxList ch = (CheckBoxList)QuestionPlaceholder.FindControl("questionCheckBoxList");
+                int count = 0;
+
+                if (ch != null)
+                {
+                    foreach (ListItem chk in ch.Items)
+                    {
+                        if (chk.Selected)
+                        {
+                            //String str = chk.Text;
+                            count++;
+                        }
+                    }
+                }
+
                 Control resultControl = FindControl("checkBoxQuestionController");
 
                 //test 1
@@ -44,10 +63,10 @@ namespace Survey_Prototype
             SqlConnection connection = ConnectToDatabase();
             int nextQuestion = 0;
 
-            if (HttpContext.Current.Session["tempCheckbox"] != null)
-            {
-                debugList = (CheckBoxList)HttpContext.Current.Session["tempCheckbox"];
-            }
+            //if (HttpContext.Current.Session["tempCheckbox"] != null)
+            //{
+            //    debugList = (CheckBoxList)HttpContext.Current.Session["tempCheckbox"];
+            //}
 
                 //load question from database
                 SqlCommand getQuestion = new SqlCommand("SELECT * FROM questionTable WHERE questionTable.q_Id = " + currentQuestion, connection);
@@ -60,7 +79,7 @@ namespace Survey_Prototype
                 {
                     //read questions returned from query
                     string questionText = reader["questionText"].ToString();
-                    int questionType = Convert.ToInt32(reader["questionType"]);
+                    questionType = Convert.ToInt32(reader["questionType"]);
 
                     //TODO (if reader["nextQuestion_Id"] == DBNull.Value)
                     //bool finishedSurvey = true;
@@ -110,9 +129,9 @@ namespace Survey_Prototype
 
                             checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
                                                                                      //checkBoxController.QuestionCheckBoxList.Controls.Add(item);
-                            debugList.Items.Add(item);
+                            //debugList.Items.Add(item);
                         }
-                        HttpContext.Current.Session["tempCheckbox"] = debugList;
+                        //HttpContext.Current.Session["tempCheckbox"] = debugList;
 
                         QuestionPlaceholder.Controls.Add(checkBoxController);
 
@@ -187,8 +206,8 @@ namespace Survey_Prototype
 
                 }
 
-                HttpContext.Current.Session["questionNumber"] = nextQuestion;
-                connection.Close();
+            HttpContext.Current.Session["questionNumberTemp"] = nextQuestion;
+            connection.Close();
             //}
 
 
@@ -250,55 +269,177 @@ namespace Survey_Prototype
 
         protected void SubmitButtonClick(object sender, EventArgs e)
         {
-            //template.Items.
-            Control resultControl = FindControl("checkBoxQuestionController");
+            
+            if(questionType == 1) //text input
+            {
+                TextQuestionController ch = (TextQuestionController)QuestionPlaceholder.FindControl("TextQuestionController");
 
-            //test 1
-            CheckBoxList resultControl2 = (CheckBoxList)FindControl("checkBoxQuestionController");
+                string value;
+                int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
+                List<questionData> storedAnswers = new List<questionData>();
 
-            CheckBoxList resultControl3 = (CheckBoxList)FindControl("questionCheckBoxList"); 
+                //List<ListItem> testList = new List<ListItem>();
 
-            //test 123213
-            CheckBoxList Cbx = (CheckBoxList)QuestionPlaceholder.FindControl("checkBoxQuestionController");
+                if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
+                {
+                    storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+                }
+                else
+                {
+                    //List<questionData> storedAnswers = new List<questionData>();
+                }
 
-            //CheckBoxList Cb4 = (CheckBoxList)CheckBoxQuestionController.
-            //foreach (ListItem li in (ListItem)resultControl)
-            //{
-            //    if (li.Selected)
-            //    {
+                if (ch != null)
+                {
+                    //foreach (ListItem chk in ch.RadioQuestionList.Items)
+                    //{
+                    //    if (chk.Selected)
+                    //    {
+                            //count++;
+                    //        value = chk.Value; //gets the a_Id
 
-            //    }
-            //}
+                    //        questionData saveQuestion = new questionData();
+                    //        saveQuestion.q_Id = currentQuestion;
+                    //        saveQuestion.a_Id = Convert.ToInt32(chk.Value);
+                    //        saveQuestion.text = "";
 
-            //test 2
-            //for (int i = 0; i < QuestionPlaceholder.Controls.Count; i++)
-            //{
-            //    if (QuestionPlaceholder.Controls[i].GetType() == typeof(CheckBoxList))
-            //    {
-            //        CheckBoxList myList = QuestionPlaceholder.Controls[i].GetType();
-            //    }
-            //}
+                    //        //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
+                    //        storedAnswers.Add(saveQuestion);
+                    //    //}
+                    //}
+                    String test = ch.QuestionTextBox.Text;
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
+                }
+            }
 
-            //test 3
-            //foreach (ListItem cbList in QuestionPlaceholder.Controls.("checkBoxQuestionController")
-            //{
-            //    if (cbList.Selected)
-            //    {
+            else if(questionType == 2) //checkbox
+            {
+                CheckBoxQuestionController ch = (CheckBoxQuestionController)QuestionPlaceholder.FindControl("checkBoxQuestionController");
+                int count = 0;
+                string value;
+                int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
+                List<questionData> storedAnswers = new List<questionData>();
 
-            //    }
-            //}
-            //testc 4
-            //foreach (ListItem cb in QuestionPlaceholder.Controls.OfType<ListItem>())
-            //{
-            //    if (cb != null)
-            //    {
+                //List<ListItem> testList = new List<ListItem>();
 
-            //    }
-            //}
+                if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
+                {
+                    storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+                }
+                else
+                {
+                    //List<questionData> storedAnswers = new List<questionData>();
+                }
+                    
+                if (ch != null)
+                {
+                    foreach (ListItem chk in ch.QuestionCheckBoxList.Items)
+                    {
+                        if (chk.Selected)
+                        {
+                            count++;
+                            value = chk.Value; //gets the a_Id
+
+                            questionData saveQuestion = new questionData();
+                            saveQuestion.q_Id = currentQuestion;
+                            saveQuestion.a_Id = Convert.ToInt32(chk.Value);
+                            saveQuestion.text = "";
+
+                            //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
+                            storedAnswers.Add(saveQuestion);
+                        }
+                    }
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
+                }
+            }
+
+            else if(questionType == 3) //dropdown
+            {
+                DropdownQuestionController ch = (DropdownQuestionController)QuestionPlaceholder.FindControl("dropdownQuestionController");
+
+                string value;
+                int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
+                List<questionData> storedAnswers = new List<questionData>();
+
+                //List<ListItem> testList = new List<ListItem>();
+
+                if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
+                {
+                    storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+                }
+                else
+                {
+                    //List<questionData> storedAnswers = new List<questionData>();
+                }
+
+                if (ch != null)
+                {
+                    foreach (ListItem chk in ch.DropdownQuestionList.Items)
+                    {
+                        if (chk.Selected)
+                        {
+                            //count++;
+                            value = chk.Value; //gets the a_Id
+
+                            questionData saveQuestion = new questionData();
+                            saveQuestion.q_Id = currentQuestion;
+                            saveQuestion.a_Id = Convert.ToInt32(chk.Value);
+                            saveQuestion.text = "";
+
+                            //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
+                            storedAnswers.Add(saveQuestion);
+                        }
+                    }
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
+                }
+            }
+
+            else if(questionType == 4) //radio
+            {
+                RadioQuestionController ch = (RadioQuestionController)QuestionPlaceholder.FindControl("radioQuestionController");
+
+                string value;
+                int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
+                List<questionData> storedAnswers = new List<questionData>();
+
+                //List<ListItem> testList = new List<ListItem>();
+
+                if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
+                {
+                    storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+                }
+                else
+                {
+                    //List<questionData> storedAnswers = new List<questionData>();
+                }
+
+                if (ch != null)
+                {
+                    foreach (ListItem chk in ch.RadioQuestionList.Items)
+                    {
+                        if (chk.Selected)
+                        {
+                            //count++;
+                            value = chk.Value; //gets the a_Id
+
+                            questionData saveQuestion = new questionData();
+                            saveQuestion.q_Id = currentQuestion;
+                            saveQuestion.a_Id = Convert.ToInt32(chk.Value);
+                            saveQuestion.text = "";
+
+                            //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
+                            storedAnswers.Add(saveQuestion);
+                        }
+                    }
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
+                }
+
+            }
 
 
-                //Control searchControl1 = this.Controls[0].Controls[3].Controls[1].Controls[1].Controls[1];
-                Response.Redirect("Question.aspx");
+            int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated
+            HttpContext.Current.Session["questionNumber"] = nextQuestion;
+            Response.Redirect("Question.aspx");
 
         }
 
