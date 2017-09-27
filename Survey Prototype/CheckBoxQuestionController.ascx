@@ -5,7 +5,7 @@
             <asp:Label ID="questionLabel" runat="server" Text="LabelText"></asp:Label>
         </div>
         <div class="answerOptionContainer">
-            <asp:CheckBoxList ID="questionCheckBoxList" runat="server">
+            <asp:CheckBoxList ID="questionCheckBoxList" runat="server" DataValueField="">
             </asp:CheckBoxList>
         </div>
     

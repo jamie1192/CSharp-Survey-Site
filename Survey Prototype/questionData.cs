@@ -7,13 +7,13 @@ namespace Survey_Prototype
 {
     public class questionData
     {
-        public int q_Id
+        public string q_Id
         {
             get;
             set;
         }
 
-        public int a_Id
+        public string a_Id
         {
             get;
             set;
