@@ -385,7 +385,12 @@ namespace Survey_Prototype
                             if(HttpContext.Current.Session[chk.Value] != null)
                             {
                                 //string fq_Id = ch.Attributes["data-fqId"];
-                                if (followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //don't duplicate follow up questions
+                                if (followUpQuestionList.Count > 0)
+                                {
+                                    if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //don't duplicate follow up questions)
+                                        followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString());
+                                }
+                                else
                                 {
                                     followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString());
                                 }
@@ -497,14 +502,7 @@ namespace Survey_Prototype
             //    //HttpContext.Current.Session["questionNumber"] = nextQuestion;
             //}
             //else if(HttpContext.Current.Session["followUpQuestions"] == null)
-            if(followUpQuestionList.Count == 0) //next normal question
-            {
-                int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
-                HttpContext.Current.Session["questionNumber"] = nextQuestion;
-
-                Response.Redirect("Question.aspx");
-            }
-            else if ((followUpQuestionList.Count == 0) && (HttpContext.Current.Session["surveyProgress"] != null))
+            if((followUpQuestionList.Count == 0) && ((int)HttpContext.Current.Session["questionNumberTemp"] == 0))
             {
                 //if ((int)HttpContext.Current.Session["questionNumberTemp"] == 999999)
                 //{
@@ -513,6 +511,15 @@ namespace Survey_Prototype
                 //int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
                 //HttpContext.Current.Session["questionNumber"] = nextQuestion;
             }
+            else if (followUpQuestionList.Count == 0) //next normal question
+            {
+                int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
+                HttpContext.Current.Session["questionNumber"] = nextQuestion;
+                HttpContext.Current.Session["questionNumberTemp"] = 0;
+
+                Response.Redirect("Question.aspx");
+            }
+            //else if 
             else //get queued followUps
             {
                 List<string> followUpList = (List<string>)HttpContext.Current.Session["followUpQuestions"];
