@@ -53,7 +53,7 @@
 
             </div>
 
-            <asp:Button ID="submitRegistrationButton" runat="server" Text="Submit Registration" CssClass="submitButton" />
+            <asp:Button ID="submitRegistrationButton" runat="server" OnClick="SubmitRegistration" Text="Submit Registration" CssClass="submitButton" />
 
         </div>
 

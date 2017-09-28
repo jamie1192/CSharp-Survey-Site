@@ -17,177 +17,128 @@ namespace Survey_Prototype
 
         protected void Page_Load(object sender, EventArgs e)
         {
-           
-            if (IsPostBack) //trying various ways to get survey answers within postback but can't manage to pinpoint
-                            //where each checkbox is within it's parent CheckBoxList..
-            {
-
-                string cbID = "questionCheckBoxList";
-                //template.Items.
-
-                CheckBoxList ch = (CheckBoxList)QuestionPlaceholder.FindControl("questionCheckBoxList");
-                int count = 0;
-
-                if (ch != null)
-                {
-                    foreach (ListItem chk in ch.Items)
-                    {
-                        if (chk.Selected)
-                        {
-                            //String str = chk.Text;
-                            count++;
-                        }
-                    }
-                }
-
-                Control resultControl = FindControl("checkBoxQuestionController");
-
-                //test 1
-                CheckBoxList resultControl2 = (CheckBoxList)FindControl("checkBoxQuestionController");
-
-                //CheckBoxList resultControl3 = (CheckBoxList)FindControl("questionCheckBoxList");
-                CheckBoxList findList = Form.FindControl("checkBoxQuestionController") as CheckBoxList;
-
-                //test 123213
-                CheckBoxList Cbx = (CheckBoxList)QuestionPlaceholder.FindControl("checkBoxQuestionController");
-
-               foreach(ListItem li in QuestionPlaceholder.Controls)
-                {
-                    var value = li.Value;
-                }
-
-                String cbList2 = Request.Form["questionCheckBoxList"];
-
-            }
-
             int currentQuestion = GetCurrentQuestionNumber();
             SqlConnection connection = ConnectToDatabase();
             int nextQuestion = 0;
 
-            //if (HttpContext.Current.Session["tempCheckbox"] != null)
-            //{
-            //    debugList = (CheckBoxList)HttpContext.Current.Session["tempCheckbox"];
-            //}
+            //load question from database
+            SqlCommand getQuestion = new SqlCommand("SELECT * FROM questionTable WHERE questionTable.q_Id = " + currentQuestion, connection);
 
-                //load question from database
-                SqlCommand getQuestion = new SqlCommand("SELECT * FROM questionTable WHERE questionTable.q_Id = " + currentQuestion, connection);
+            //run query
+            SqlDataReader reader = getQuestion.ExecuteReader();
 
-                //run query
-                SqlDataReader reader = getQuestion.ExecuteReader();
+            while (reader.Read())
+            {
+                //read questions returned from query
+                string questionText = reader["questionText"].ToString();
+                questionType = Convert.ToInt32(reader["questionType"]);
+                List<String> checkForFollowUps = new List<string>();
+                checkForFollowUps = (List<string>)HttpContext.Current.Session["followUpQuestions"];
 
-
-                while (reader.Read())
+                    
+                if (reader["nextQuestion_Id"] != DBNull.Value) //gets next question if it exists
                 {
-                    //read questions returned from query
-                    string questionText = reader["questionText"].ToString();
-                    questionType = Convert.ToInt32(reader["questionType"]);
-                    List<String> checkForFollowUps = new List<string>();
-                    checkForFollowUps = (List<string>)HttpContext.Current.Session["followUpQuestions"];
+                    nextQuestion = Convert.ToInt32(reader["nextQuestion_Id"]);
+                    HttpContext.Current.Session["questionNumberTemp"] = nextQuestion;
+                }
+                else //no more standard questions left
+                {
+                    HttpContext.Current.Session["surveyProgress"] = 1;
+                }
 
-                    
-                    if (reader["nextQuestion_Id"] != DBNull.Value)
+                    //load the appropriate questionController
+                    if (questionType == 1) //textbox
                     {
-                        nextQuestion = Convert.ToInt32(reader["nextQuestion_Id"]);
-                        HttpContext.Current.Session["questionNumberTemp"] = nextQuestion;
-                    }
-                    else
-                    {
-                        HttpContext.Current.Session["surveyProgress"] = 1;
-                    }
 
+                        //load TexQuestionController
+                        TextQuestionController textController = (TextQuestionController)LoadControl("~/TextQuestionController.ascx");
 
-                    //else if ((reader["nextQuestion_Id"] == DBNull.Value) && (checkForFollowUps.Count == 0)) //end of survey
-                    //    {
-                    //        finishedSurvey = true;
-                    //    }
-                    //else
-                    //{
-                        //if (reader["nextQuestion_Id"] != DBNull.Value)
-                        //{
-                        //    nextQuestion = Convert.ToInt32(reader["nextQuestion_Id"]);
-                        //}
-                        //else
-                        //{
-                        //    finishedSurvey = true;
-                        //}
-                        //questionText += nextQuestion;               
-
-
-                        //load the appropriate questionController
-                        if (questionType == 1) //textbox
-                        {
-
-                            //load TexQuestionController
-                            TextQuestionController textController = (TextQuestionController)LoadControl("~/TextQuestionController.ascx");
-
-                            //set the ID to reference to it later
-                            textController.ID = "TextQuestionController";
+                        //set the ID to reference to it later
+                        textController.ID = "TextQuestionController";
                     
+                        //Insert the active question into label
+                        textController.QuestionLabel.Text = questionText;
 
-                            //Insert the active question into label
-                            textController.QuestionLabel.Text = questionText;
-                            //textController.QuestionTextBox.Attributes.Add("q_Id", );
+                        //Insert controller to the placeholder
+                        QuestionPlaceholder.Controls.Add(textController);
+                    }
 
-                            //Insert controller to the placeholder
-                            QuestionPlaceholder.Controls.Add(textController);
-                        }
+                    else if (questionType == 2) //checkbox 
+                    {
+                        CheckBoxQuestionController checkBoxController = (CheckBoxQuestionController)LoadControl("~/CheckBoxQuestionController.ascx");
 
-                        else if (questionType == 2) //checkbox 
+                        checkBoxController.ID = "checkBoxQuestionController";
+                        checkBoxController.QuestionLabel.Text = questionText;
+                        string followUpID;
+
+                        SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+
+                        //run command
+                        try
                         {
-                            CheckBoxQuestionController checkBoxController = (CheckBoxQuestionController)LoadControl("~/CheckBoxQuestionController.ascx");
+                            SqlDataReader optionReader = optionCommand.ExecuteReader();
 
-                            checkBoxController.ID = "checkBoxQuestionController";
-                            checkBoxController.QuestionLabel.Text = questionText;
-                            string followUpID;
-
-                            SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
-
-                            //run command
-                            try
+                            //loop through all results
+                            while (optionReader.Read())
                             {
-                                SqlDataReader optionReader = optionCommand.ExecuteReader();
-
-                                //loop through all results
-                                while (optionReader.Read())
+                                ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
+ 
+                                if (optionReader["fq_Id"] != DBNull.Value)
                                 {
-                                    //TODO if optionReader["fq_Id"] != DBNull.Value, create session list to store followUp
-                                    ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
-                                    //CheckBox cb = new QuestionCheckBoxList(optionReader)
-                                    if (optionReader["fq_Id"] != DBNull.Value)
-                                    {
-                                        string currentA_Id = optionReader["a_Id"].ToString();
-                                        followUpID = optionReader["fq_Id"].ToString();
-                                        HttpContext.Current.Session[currentA_Id] = followUpID; //filthy workaround to store fq_Id's
-                                        //item.Attributes.Add("data-value", followUpID);
-                                    }
+                                    string currentA_Id = optionReader["a_Id"].ToString();
+                                    followUpID = optionReader["fq_Id"].ToString();
+                                    HttpContext.Current.Session[currentA_Id] = followUpID; //filthy workaround to store fq_Id's by its answer_Id
+                                    //item.Attributes.Add("data-value", followUpID);
+                                }
 
                                 int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
 
-                                //if
-
-                                    checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
-                                                                                             //checkBoxController.QuestionCheckBoxList.Controls.Add(item);
-                                    //debugList.Items.Add(item);
-                                }
-                             
-                                //HttpContext.Current.Session["tempCheckbox"] = debugList;
-
-                                QuestionPlaceholder.Controls.Add(checkBoxController);
-
-
+                                checkBoxController.QuestionCheckBoxList.Items.Add(item); //add answer to list
                             }
-                            catch (Exception err)
-                            {
-                                Console.Write("Database/connection error" + err);
-                            }
+                            QuestionPlaceholder.Controls.Add(checkBoxController); //add all answers to placeholder
                         }
-
-                        else if (questionType == 3) // dropdown
+                        catch (Exception err)
                         {
-                            DropdownQuestionController dropdownController = (DropdownQuestionController)LoadControl("~/DropdownQuestionController.ascx");
+                            Console.Write("Database/connection error" + err);
+                        }
+                    }
 
-                            dropdownController.ID = "dropdownQuestionController";
-                            dropdownController.QuestionLabel.Text = questionText;
+                    else if (questionType == 3) // dropdown
+                    {
+                        DropdownQuestionController dropdownController = (DropdownQuestionController)LoadControl("~/DropdownQuestionController.ascx");
+
+                        dropdownController.ID = "dropdownQuestionController";
+                        dropdownController.QuestionLabel.Text = questionText;
+
+                        SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+
+                        //run command
+                        try
+                        {
+                            SqlDataReader optionReader = optionCommand.ExecuteReader();
+
+                            //loop through all results
+                            while (optionReader.Read())
+                            {
+                                ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
+                                dropdownController.DropdownQuestionList.Items.Add(item); //add answer to list
+                            }
+
+                            //add all retrieved answers to controller
+                            QuestionPlaceholder.Controls.Add(dropdownController);
+                        }
+                        catch (Exception err)
+                        {
+                            Console.Write("Database/connection error" + err);
+                        }
+                    }
+
+                    else if (questionType == 4) //radio 
+                        {
+                            RadioQuestionController radioController = (RadioQuestionController)LoadControl("~/RadioQuestionController.ascx");
+
+                            radioController.ID = "radioQuestionController";
+                            radioController.QuestionLabel.Text = questionText;
 
                             SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
 
@@ -200,61 +151,20 @@ namespace Survey_Prototype
                                 while (optionReader.Read())
                                 {
                                     ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
-                                    dropdownController.DropdownQuestionList.Items.Add(item); //add answer to list
+                                    radioController.RadioQuestionList.Items.Add(item);
+                                    //radioTemplate.Add(item);
                                 }
 
-                                //add all retrieved answers to controller
-                                QuestionPlaceholder.Controls.Add(dropdownController);
+                                QuestionPlaceholder.Controls.Add(radioController);
                             }
                             catch (Exception err)
                             {
-                                Console.Write("Database/connection error" + err);
+                                Console.Write("Database/connection error: " + err);
                             }
                         }
-
-                        else if (questionType == 4) //radio 
-                            {
-                                RadioQuestionController radioController = (RadioQuestionController)LoadControl("~/RadioQuestionController.ascx");
-
-                                radioController.ID = "radioQuestionController";
-                                radioController.QuestionLabel.Text = questionText;
-
-                                SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
-
-                                //run command
-                                try
-                                {
-                                    SqlDataReader optionReader = optionCommand.ExecuteReader();
-
-                                    //loop through all results
-                                    while (optionReader.Read())
-                                    {
-                                        ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
-                                        radioController.RadioQuestionList.Items.Add(item);
-                                        //radioTemplate.Add(item);
-                                    }
-
-                                    QuestionPlaceholder.Controls.Add(radioController);
-                                }
-                                catch (Exception err)
-                                {
-                                    Console.Write("Database/connection error: " + err);
-                                }
-                            }
-                    //}
+                //}
             }
-
-            //if (reader["nextQuestion_Id"] == DBNull.Value)
-            //{ 
-            //    HttpContext.Current.Session["surveyProgress"] = 1;
-            //}
-            
             connection.Close();
-            //}
-
-
-
-
         }
 
         private static int GetCurrentQuestionNumber()
@@ -341,7 +251,7 @@ namespace Survey_Prototype
                 {
                     String textAnswer = ch.QuestionTextBox.Text;
 
-                    questionData saveQuestion = new questionData
+                    questionData saveQuestion = new questionData //instantiate new questionData class to save as listItem
                     {
                         q_Id = currentQuestion.ToString(),
                         a_Id = "",
@@ -356,7 +266,6 @@ namespace Survey_Prototype
             else if(questionType == 2) //checkbox
             {
                 CheckBoxQuestionController ch = (CheckBoxQuestionController)QuestionPlaceholder.FindControl("checkBoxQuestionController");
-                int count = 0;
                 string value;
                 int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
 
@@ -375,28 +284,27 @@ namespace Survey_Prototype
                     
                 if (ch != null)
                 {
-                    foreach (ListItem chk in ch.QuestionCheckBoxList.Items)
+                    foreach (ListItem chk in ch.QuestionCheckBoxList.Items) 
                     {
-                        if (chk.Selected)
+                        if (chk.Selected) //if checkbox was selected by user
                         {
-                            count++;
                             value = chk.Value; //gets the a_Id
-                            //if(ch.Attributes["data-fqId"] != null)
-                            if(HttpContext.Current.Session[chk.Value] != null)
+
+                            if(HttpContext.Current.Session[chk.Value] != null) //if there's a follow up question associated with this answer
                             {
                                 //string fq_Id = ch.Attributes["data-fqId"];
-                                if (followUpQuestionList.Count > 0)
+                                if (followUpQuestionList.Count > 0) //if there's already a queue of followUps waiting
                                 {
-                                    if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //don't duplicate follow up questions)
+                                    if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //if the followUpQuestion isn't already queued
                                         followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString());
                                 }
-                                else
+                                else 
                                 {
-                                    followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString());
+                                    followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString()); //add new followUp
                                 }
                             }
 
-                            questionData saveQuestion = new questionData
+                            questionData saveQuestion = new questionData //instantiate new questionData class to save as listItem
                             {
                                 q_Id = currentQuestion.ToString(),
                                 a_Id = chk.Value,
@@ -490,27 +398,39 @@ namespace Survey_Prototype
             }
 
 
-
-            //if ((followUpQuestionList.Count == 0) && ((int)HttpContext.Current.Session["questionNumberTemp"] == 999999))
-            //if ((followUpQuestionList.Count == 0) && (finishedSurvey))
-            //{
-            //    //if ((int)HttpContext.Current.Session["questionNumberTemp"] == 999999)
-            //    //{
-            //    Response.Redirect("Register.aspx");
-            //    //}
-            //    //int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
-            //    //HttpContext.Current.Session["questionNumber"] = nextQuestion;
-            //}
-            //else if(HttpContext.Current.Session["followUpQuestions"] == null)
-            if((followUpQuestionList.Count == 0) && ((int)HttpContext.Current.Session["questionNumberTemp"] == 0))
+            if((followUpQuestionList.Count == 0) && ((int)HttpContext.Current.Session["questionNumberTemp"] == 0)) //if no followUps and no next question - end of survey
             {
-                //if ((int)HttpContext.Current.Session["questionNumberTemp"] == 999999)
-                //{
+                SqlConnection connection = ConnectToDatabase();
+                string ipAddress = GetIPAddress();
+                
+                //create user
+                string cmd = "INSERT INTO testTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
+                //run query
+                SqlCommand insertUser = new SqlCommand(cmd, connection);
+                //get newly created u_Id
+                int newUser_Id = (int)insertUser.ExecuteScalar();
+                //store in session
+                HttpContext.Current.Session["u_Id"] = newUser_Id;
+
+                //get u_ID (save to session to update user details if they register)
+                //save answers from survey
+                List<questionData> getAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+
+                for (int i = 0; i < getAnswers.Count; i++)
+                {
+                    string qID = getAnswers[i].q_Id;
+                    string aID = getAnswers[i].a_Id;
+                    string text = getAnswers[i].text;
+                    string s = "INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')";
+                    SqlCommand saveData = new SqlCommand("INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')", connection);
+
+                    saveData.ExecuteNonQuery();
+                }
+
+                connection.Close();
                 Response.Redirect("Register.aspx");
-                //}
-                //int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
-                //HttpContext.Current.Session["questionNumber"] = nextQuestion;
             }
+
             else if (followUpQuestionList.Count == 0) //next normal question
             {
                 int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
@@ -519,7 +439,7 @@ namespace Survey_Prototype
 
                 Response.Redirect("Question.aspx");
             }
-            //else if 
+
             else //get queued followUps
             {
                 List<string> followUpList = (List<string>)HttpContext.Current.Session["followUpQuestions"];
@@ -532,19 +452,6 @@ namespace Survey_Prototype
                 }
                 Response.Redirect("Question.aspx");
             }
-            //if ((followUpQuestionList.Count == 0) && (finishedSurvey))
-            //{
-            //    //if ((int)HttpContext.Current.Session["questionNumberTemp"] == 999999)
-            //    //{
-            //    Response.Redirect("Register.aspx");
-            //    //}
-            //    //int nextQuestion = (int)HttpContext.Current.Session["questionNumberTemp"]; //get next question that was set when question was generated   
-            //    //HttpContext.Current.Session["questionNumber"] = nextQuestion;
-            //}
-
-
-            //Response.Redirect("Question.aspx");
-
         }
 
         protected void SkipQuestion(object sender, EventArgs e)
@@ -554,5 +461,64 @@ namespace Survey_Prototype
             //foreach (ListItem item in radioTemplate)
             //    if (item.Selected) selected.Add(item);
         }
+
+        protected string GetIPAddress()
+        {
+            //get IP through PROXY
+            //====================
+            System.Web.HttpContext context = System.Web.HttpContext.Current;
+            string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
+
+            //should break ipAddress down, but here is what it looks like:
+            // return ipAddress;
+            if (!string.IsNullOrEmpty(ipAddress))
+            {
+                string[] address = ipAddress.Split(',');
+                if (address.Length != 0)
+                {
+                    return address[0];
+                }
+            }
+            //if not proxy, get nice ip, give that back :(
+            //ACROSS WEB HTTP REQUEST
+            //=======================
+            ipAddress = context.Request.UserHostAddress;//ServerVariables["REMOTE_ADDR"];
+
+            if (ipAddress.Trim() == "::1")//ITS LOCAL(either lan or on same machine), CHECK LAN IP INSTEAD
+            {
+                //This is for Local(LAN) Connected ID Address
+                string stringHostName = System.Net.Dns.GetHostName();
+                //Get Ip Host Entry
+                System.Net.IPHostEntry ipHostEntries = System.Net.Dns.GetHostEntry(stringHostName);
+                //Get Ip Address From The Ip Host Entry Address List
+                System.Net.IPAddress[] arrIpAddress = ipHostEntries.AddressList;
+
+                try
+                {
+                    ipAddress = arrIpAddress[1].ToString();
+                }
+                catch
+                {
+                    try
+                    {
+                        ipAddress = arrIpAddress[0].ToString();
+                    }
+                    catch
+                    {
+                        try
+                        {
+                            arrIpAddress = System.Net.Dns.GetHostAddresses(stringHostName);
+                            ipAddress = arrIpAddress[0].ToString();
+                        }
+                        catch
+                        {
+                            ipAddress = "127.0.0.1";
+                        }
+                    }
+                }
+            }
+            return ipAddress;
+        }
+
     }
 }
