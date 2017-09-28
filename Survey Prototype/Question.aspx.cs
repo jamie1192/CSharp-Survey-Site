@@ -403,11 +403,19 @@ namespace Survey_Prototype
                     string aID = getAnswers[i].a_Id;
                     string text = getAnswers[i].text;
                     //save answer to each question
-                    string s = "INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')";
-                    SqlCommand saveData = new SqlCommand("INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')", connection);
+                    try
+                    {
+                        string s = "INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')";
+                        SqlCommand saveData = new SqlCommand("INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')", connection);
 
-                    //run query
-                    saveData.ExecuteNonQuery();
+                        //run query
+                        saveData.ExecuteNonQuery();
+                    }
+                    catch(Exception err)
+                    {
+                        Console.Write("Database/network error occurred: " + err);
+                    }
+                    
                 }
                 connection.Close();
                 Response.Redirect("Register.aspx"); //redirect to register page
