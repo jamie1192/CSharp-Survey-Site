@@ -22,15 +22,6 @@ namespace Survey_Prototype {
         protected global::System.Web.UI.WebControls.PlaceHolder QuestionPlaceholder;
         
         /// <summary>
-        /// SkipButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button SkipButton;
-        
-        /// <summary>
         /// SubmitButton control.
         /// </summary>
         /// <remarks>

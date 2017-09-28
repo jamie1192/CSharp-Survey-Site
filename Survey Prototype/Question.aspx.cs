@@ -269,10 +269,6 @@ namespace Survey_Prototype
                 string value;
                 int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
 
-               
-
-                //List<ListItem> testList = new List<ListItem>();
-
                 if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
                 {
                     storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
@@ -292,7 +288,6 @@ namespace Survey_Prototype
 
                             if(HttpContext.Current.Session[chk.Value] != null) //if there's a follow up question associated with this answer
                             {
-                                //string fq_Id = ch.Attributes["data-fqId"];
                                 if (followUpQuestionList.Count > 0) //if there's already a queue of followUps waiting
                                 {
                                     if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //if the followUpQuestion isn't already queued
@@ -311,12 +306,11 @@ namespace Survey_Prototype
                                 text = ""
                             };
 
-                            //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
                             storedAnswers.Add(saveQuestion);
                         }
                     }
-                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
-                    HttpContext.Current.Session["followUpQuestions"] = followUpQuestionList;
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers; //append stored answers session
+                    HttpContext.Current.Session["followUpQuestions"] = followUpQuestionList; //append followUp list
                 }
             }
 
@@ -325,9 +319,6 @@ namespace Survey_Prototype
                 DropdownQuestionController ch = (DropdownQuestionController)QuestionPlaceholder.FindControl("dropdownQuestionController");
 
                 int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
-                //List<questionData> storedAnswers = new List<questionData>();
-
-                //List<ListItem> testList = new List<ListItem>();
 
                 if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
                 {
@@ -361,17 +352,10 @@ namespace Survey_Prototype
 
                 string value;
                 int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
-                //List<questionData> storedAnswers = new List<questionData>();
-
-                //List<ListItem> testList = new List<ListItem>();
 
                 if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
                 {
                     storedAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
-                }
-                else
-                {
-                    //List<questionData> storedAnswers = new List<questionData>();
                 }
 
                 if (ch != null)
@@ -380,7 +364,6 @@ namespace Survey_Prototype
                     {
                         if (chk.Selected)
                         {
-                            //count++;
                             value = chk.Value; //gets the a_Id
 
                             questionData saveQuestion = new questionData();
@@ -388,13 +371,11 @@ namespace Survey_Prototype
                             saveQuestion.a_Id = chk.Value;
                             saveQuestion.text = "";
 
-                            //ListItem item = new ListItem(currentQuestion.ToString(), chk.Value, "text");
-                            storedAnswers.Add(saveQuestion);
+                            storedAnswers.Add(saveQuestion); //save users answer
                         }
                     }
-                    HttpContext.Current.Session["userAnswers"] = storedAnswers;
+                    HttpContext.Current.Session["userAnswers"] = storedAnswers; //append saved answers list in session
                 }
-
             }
 
 
@@ -403,7 +384,7 @@ namespace Survey_Prototype
                 SqlConnection connection = ConnectToDatabase();
                 string ipAddress = GetIPAddress();
                 
-                //create user
+                //create user and get u_Id
                 string cmd = "INSERT INTO testTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
                 //run query
                 SqlCommand insertUser = new SqlCommand(cmd, connection);
@@ -421,14 +402,15 @@ namespace Survey_Prototype
                     string qID = getAnswers[i].q_Id;
                     string aID = getAnswers[i].a_Id;
                     string text = getAnswers[i].text;
+                    //save answer to each question
                     string s = "INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')";
                     SqlCommand saveData = new SqlCommand("INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ('" + newUser_Id + "','" + aID + "'," + "'" + text + "')", connection);
 
+                    //run query
                     saveData.ExecuteNonQuery();
                 }
-
                 connection.Close();
-                Response.Redirect("Register.aspx");
+                Response.Redirect("Register.aspx"); //redirect to register page
             }
 
             else if (followUpQuestionList.Count == 0) //next normal question
@@ -454,22 +436,14 @@ namespace Survey_Prototype
             }
         }
 
-        protected void SkipQuestion(object sender, EventArgs e)
-        {
 
-            //List<ListItem> selected = new List<ListItem>();
-            //foreach (ListItem item in radioTemplate)
-            //    if (item.Selected) selected.Add(item);
-        }
 
         protected string GetIPAddress()
         {
             //get IP through PROXY
-            //====================
             System.Web.HttpContext context = System.Web.HttpContext.Current;
             string ipAddress = context.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
 
-            //should break ipAddress down, but here is what it looks like:
             // return ipAddress;
             if (!string.IsNullOrEmpty(ipAddress))
             {
@@ -479,9 +453,8 @@ namespace Survey_Prototype
                     return address[0];
                 }
             }
-            //if not proxy, get nice ip, give that back :(
+            //if not proxy, get nice ip and return
             //ACROSS WEB HTTP REQUEST
-            //=======================
             ipAddress = context.Request.UserHostAddress;//ServerVariables["REMOTE_ADDR"];
 
             if (ipAddress.Trim() == "::1")//ITS LOCAL(either lan or on same machine), CHECK LAN IP INSTEAD
