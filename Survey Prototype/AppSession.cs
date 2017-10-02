@@ -7,6 +7,7 @@ namespace Survey_Prototype
 {
     public class AppSession
     {
+        //Staff member
         public static void setUsername(string username) //set username after successful login
         {
             HttpContext.Current.Session["staffUserName"] = username;
@@ -22,6 +23,33 @@ namespace Survey_Prototype
             string username = getUserName();
             if (username != null && username.Length > 0)
                 return true;
+            else
+                return false;
+        }
+
+        //User/Survey responder
+        public static void setResponderUserId(int uid)
+        {
+            HttpContext.Current.Session["u_Id"] = uid;
+        }
+
+        public static int getResponderUserId()
+        {
+            return (int)HttpContext.Current.Session["u_Id"];
+        }
+
+        //Ensure same user can't do survey again
+        public static void setSurveyCompleted(bool completed)
+        {
+            HttpContext.Current.Session["surveyCompleted"] = completed;
+        }
+
+        public static bool getSurveyCompletedStatus()
+        {
+            if (HttpContext.Current.Session["surveyCompleted"] != null)
+            {
+                return (bool)HttpContext.Current.Session["surveyCompleted"];
+            }
             else
                 return false;
         }

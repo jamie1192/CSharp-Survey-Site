@@ -17,6 +17,11 @@ namespace Survey_Prototype
 
         protected void Page_Load(object sender, EventArgs e)
         {
+            if (AppSession.getSurveyCompletedStatus())
+            {
+                Response.Redirect("~/SurveyCompleted.aspx");
+            }
+
             int currentQuestion = GetCurrentQuestionNumber();
             SqlConnection connection = ConnectToDatabase();
             int nextQuestion = 0;
@@ -391,7 +396,8 @@ namespace Survey_Prototype
                 //get newly created u_Id
                 int newUser_Id = (int)insertUser.ExecuteScalar();
                 //store in session
-                HttpContext.Current.Session["u_Id"] = newUser_Id;
+                //HttpContext.Current.Session["u_Id"] = newUser_Id;
+                AppSession.setResponderUserId(newUser_Id);
 
                 //get u_ID (save to session to update user details if they register)
                 //save answers from survey

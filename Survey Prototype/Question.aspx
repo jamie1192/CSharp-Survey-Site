@@ -7,7 +7,7 @@
 
             </asp:PlaceHolder>
             <div class="buttonContainer">
-                    <asp:Button ID="SubmitButton" CssClass="buttonContainerButton" runat="server" OnClick="SubmitButtonClick" Text="Next" />
+                    <asp:Button ID="SubmitButton" CssClass="buttonContainerButton" runat="server" OnClick="SubmitButtonClick" Text="Submit/Skip" />
                 </div>
         </div>
  

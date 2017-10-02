@@ -16,49 +16,62 @@ namespace Survey_Prototype
 
             SqlConnection connection = ConnectToDatabase();
 
-            
-            //string cmd = "INSERT INTO testTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
-            //string cmd = "INSERT INTO testTable (ipAddress) VALUES ('"+ipAddress+"')";
-
-            //SqlCommand testUser = new SqlCommand(cmd, connection);
-            //SqlCommand testUser = new SqlCommand("INSERT INTO testTable (ipAddress) VALUES ('" + ipAddress + "')" + connection);
-            //int newID = (int)testUser.ExecuteScalar();
-            //connection.Close();
+            for (int day = 1; day <= 31; day++)
+            {
+                dobDay.Items.Add(day.ToString());
+            }
+            for (int month = 1; month <= 12; month++)
+            {
+                dobMonth.Items.Add(month.ToString());
+            }
+            for (int year = 1900; year <= (Convert.ToInt32(DateTime.Now.Year.ToString())); year++)
+            {
+                dobYear.Items.Add(year.ToString());
+            }
         }
 
         protected void SubmitRegistration(object sender, EventArgs e)
         {
-            //String textAnswer = ch.QuestionTextBox.Text;
-            //string firstName = ((TextBox)MainContent.FindControl("firstNameTextBox")).Text;
             string firstName = firstNameTextBox.Text;
-            //string middleName = middleNameTextBox.Text;
             string lastName = lastNameTextBox.Text;
+            string phoneNumber = phoneNumberTextBox.Text;
+            string dobConcatenate = dobDay.SelectedItem.ToString() + "/" + dobMonth.SelectedItem.ToString() + "/" + dobYear.SelectedItem.ToString();
+
 
             SqlConnection connection = ConnectToDatabase();
 
-            //save user data to DB
-            //get generated u_Id to throw into saveData below
-            //string ipAddress = GetIPAddress();
-            //int user_Id = 0;
+            string registerUserQuery = "UPDATE userTable SET firstName=@firstName, lastname=@lastName, phoneNumber=@phone, dob=@dob WHERE u_Id=@u_Id;";
 
-            //List<questionData> getAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
+            SqlCommand registerUser = new SqlCommand(registerUserQuery, connection);
+            registerUser.Parameters.Add(new SqlParameter("firstName", firstName));
+            registerUser.Parameters.Add(new SqlParameter("lastName", lastName));
+            registerUser.Parameters.Add(new SqlParameter("phone", phoneNumber));
+            registerUser.Parameters.Add(new SqlParameter("dob", dobConcatenate));
+            registerUser.Parameters.Add(new SqlParameter("u_Id", AppSession.getResponderUserId()));
 
-            //for(int i = 0; i < getAnswers.Count; i++)
-            //{
-            //    string qID = getAnswers[i].q_Id;
-            //    string aID = getAnswers[i].a_Id;
-            //    string text = getAnswers[i].text;
+            try
+            {
+                registerUser.ExecuteNonQuery();
+                connection.Close();
 
-            //    SqlCommand saveData = new SqlCommand("INSERT INTO userAnswersTable (u_Id, a_Id, answerText) VALUES ("+ user_Id +","+ aID + "," + "'" + text + "')" + connection);
-            //}
+                AppSession.setSurveyCompleted(true);
+                Response.Redirect("~/SurveyCompleted.aspx");
+            }
+            catch (Exception err)
+            {
+                Console.Write("Database/connection error: " + err);
+            }
+
         }
 
 
         private static SqlConnection ConnectToDatabase()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["Database"].ToString();
-            SqlConnection connection = new SqlConnection();
-            connection.ConnectionString = connectionString;
+            SqlConnection connection = new SqlConnection
+            {
+                ConnectionString = connectionString
+            };
             try
             {
                 connection.Open();

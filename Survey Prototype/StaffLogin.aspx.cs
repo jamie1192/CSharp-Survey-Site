@@ -31,14 +31,15 @@ namespace Survey_Prototype
 
             SqlDataReader reader = findUser.ExecuteReader();
 
-            if (reader.Read())
+            if (reader.Read()) //login is correct
             {
                 string staffUsername = reader["username"].ToString();
                 AppSession.setUsername(staffUsername);
 
+                connection.Close();
                 Response.Redirect("~/StaffSearch.aspx");
             }
-            else{
+            else{ //incorrect credentials provided
                 loginErrorMessage.Text = "Username and/or password incorrect!";
             }
         }

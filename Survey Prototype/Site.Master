@@ -44,7 +44,6 @@
         <div class="navbar navbar-inverse navbar-fixed-top">
             <div class="navContainer">
                 <img class="headerLogo" src="Content/AIT_LOGO_newblue_y9eugb.png" />
-                <a href="Register.aspx">Register</a>
                 <a href="Question.aspx">Survey</a>
                 <a href="StaffSearch.aspx">Staff Search</a>
             </div>

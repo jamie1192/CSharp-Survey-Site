@@ -22,6 +22,15 @@ namespace Survey_Prototype {
         protected global::System.Web.UI.WebControls.TextBox firstNameTextBox;
         
         /// <summary>
+        /// firstNameValidator control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator firstNameValidator;
+        
+        /// <summary>
         /// lastNameTextBox control.
         /// </summary>
         /// <remarks>
@@ -31,31 +40,40 @@ namespace Survey_Prototype {
         protected global::System.Web.UI.WebControls.TextBox lastNameTextBox;
         
         /// <summary>
-        /// DOBDayTextBox control.
+        /// lastNameValidator control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBDayTextBox;
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator lastNameValidator;
         
         /// <summary>
-        /// DOBMonthTextBox control.
+        /// dobDay control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBMonthTextBox;
+        protected global::System.Web.UI.WebControls.DropDownList dobDay;
         
         /// <summary>
-        /// DOBYearTextBox control.
+        /// dobMonth control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBYearTextBox;
+        protected global::System.Web.UI.WebControls.DropDownList dobMonth;
+        
+        /// <summary>
+        /// dobYear control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.DropDownList dobYear;
         
         /// <summary>
         /// phoneNumberTextBox control.
@@ -65,6 +83,15 @@ namespace Survey_Prototype {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.TextBox phoneNumberTextBox;
+        
+        /// <summary>
+        /// phoneRegex control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.RegularExpressionValidator phoneRegex;
         
         /// <summary>
         /// submitRegistrationButton control.

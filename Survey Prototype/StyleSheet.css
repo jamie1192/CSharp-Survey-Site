@@ -71,10 +71,7 @@
 }
 
 .TextBoxInputs {
-    left: 30px;
-    position: relative;
-    margin-top: 20px;
-    top: 0;
+    width: 400px;
 }
 
 .DOBContainer {
@@ -90,9 +87,9 @@
 }
 
 .phoneContainer {
-    padding-top:20px;
-    margin-top: 30px;
-    margin-bottom: 30px;
+    padding-top: 20px;
+    height: 150px;
+    width: 460px;
 }
 
 .submitButton {
@@ -100,14 +97,49 @@
     position: absolute;
 }
 
+.dobDropdowns {
+    margin-left: 30px;
+}
+
+.inputErrorMessage{
+    color: red;
+}
+
+.phoneTextBoxContainer {
+    float: left;
+    margin-left: 30px;
+}
+
+.phoneErrorContainer {
+    float: right;
+    margin-left: 30px;
+}
+
+.nameContainer{
+    padding-left: 30px;
+    height: 30px;
+    width: 460px;
+    margin-bottom: 30px;
+}
+
+.nameInputContainer {
+    float: left;
+}
+
+.nameErrorContainer {
+    float: right;    
+}
+
+
+
+
+
+
 
 /*Staff search page*/
-
 .gridViewContainer {
     margin-top: 90px;
     bottom: 0;
-    
-    
 }
 
 .GridView {
