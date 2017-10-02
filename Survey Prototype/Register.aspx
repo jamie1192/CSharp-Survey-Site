@@ -19,9 +19,9 @@
             <br />
             <br />
 
-            <asp:TextBox ID="middleNameTextBox" runat="server" CssClass="TextBoxInputs" placeholder=" Middle name (optional)"></asp:TextBox>
+        <%--    <asp:TextBox ID="middleNameTextBox" runat="server" CssClass="TextBoxInputs" placeholder=" Middle name (optional)"></asp:TextBox>
             <br />
-            <br />
+            <br />--%>
 
             <asp:TextBox ID="lastNameTextBox" runat="server" CssClass="TextBoxInputs" placeholder=" Last Name"></asp:TextBox>
             <br />

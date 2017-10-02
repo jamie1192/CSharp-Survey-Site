@@ -385,7 +385,7 @@ namespace Survey_Prototype
                 string ipAddress = GetIPAddress();
                 
                 //create user and get u_Id
-                string cmd = "INSERT INTO testTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
+                string cmd = "INSERT INTO userTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
                 //run query
                 SqlCommand insertUser = new SqlCommand(cmd, connection);
                 //get newly created u_Id

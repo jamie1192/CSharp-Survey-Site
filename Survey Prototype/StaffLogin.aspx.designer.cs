@@ -10,69 +10,60 @@
 namespace Survey_Prototype {
     
     
-    public partial class Register {
+    public partial class StaffLogin {
         
         /// <summary>
-        /// firstNameTextBox control.
+        /// staffUserNameLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox firstNameTextBox;
+        protected global::System.Web.UI.WebControls.Label staffUserNameLabel;
         
         /// <summary>
-        /// lastNameTextBox control.
+        /// staffUsernameText control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox lastNameTextBox;
+        protected global::System.Web.UI.WebControls.TextBox staffUsernameText;
         
         /// <summary>
-        /// DOBDayTextBox control.
+        /// loginErrorMessage control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBDayTextBox;
+        protected global::System.Web.UI.WebControls.Label loginErrorMessage;
         
         /// <summary>
-        /// DOBMonthTextBox control.
+        /// staffPasswordLabel control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBMonthTextBox;
+        protected global::System.Web.UI.WebControls.Label staffPasswordLabel;
         
         /// <summary>
-        /// DOBYearTextBox control.
+        /// staffPasswordText control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox DOBYearTextBox;
+        protected global::System.Web.UI.WebControls.TextBox staffPasswordText;
         
         /// <summary>
-        /// phoneNumberTextBox control.
+        /// loginButton control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox phoneNumberTextBox;
-        
-        /// <summary>
-        /// submitRegistrationButton control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button submitRegistrationButton;
+        protected global::System.Web.UI.WebControls.Button loginButton;
     }
 }

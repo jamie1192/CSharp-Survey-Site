@@ -176,7 +176,55 @@
 
 .buttonContainerButton { 
     right: 0;
-    
     position: relative;
 }
 
+
+/*Completed Survey*/
+
+.completedSurveyContainer {
+    border-radius: 5px;
+    width: 85%;
+    margin: 0 auto;
+    margin-top: 120px;
+    height: auto;
+    padding: 30px;
+    position: relative;
+}
+
+
+.completedSurveyMessageContainer {
+    width: auto;
+    height: 80px;
+    top: 0;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    z-index: 3;
+    font-size: 23px;
+}
+
+.successTick{
+    height:50px;
+    width: 50px;
+}
+
+/*Staff login*/
+
+.loginFields {
+    margin: 30px;
+}
+
+.staffLoginTitle {
+
+}
+
+.loginButtonContainer {
+    margin-right: 30px;
+    margin-bottom: 30px;
+    float: right;
+}
+
+.loginErrorMessage {
+    color: red;
+}

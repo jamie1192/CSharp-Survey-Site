@@ -176,6 +176,7 @@
     <Content Include="Content\AIT_LOGO_newblue_y9eugb.png" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\check tick.svg" />
     <Content Include="Content\Site.css" />
     <Content Include="DropdownQuestionController.ascx" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
@@ -220,8 +221,10 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Site.Master" />
+    <Content Include="StaffLogin.aspx" />
     <Content Include="StaffSearch.aspx" />
     <Content Include="StyleSheet.css" />
+    <Content Include="SurveyCompleted.aspx" />
     <Content Include="TextQuestionController.ascx" />
     <Content Include="ViewSwitcher.ascx" />
     <Content Include="Web.config" />
@@ -343,6 +346,7 @@
     <Compile Include="Account\VerifyPhoneNumber.aspx.designer.cs">
       <DependentUpon>VerifyPhoneNumber.aspx</DependentUpon>
     </Compile>
+    <Compile Include="AppSession.cs" />
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="About.aspx.cs">
       <DependentUpon>About.aspx</DependentUpon>
@@ -423,6 +427,13 @@
     <Compile Include="Site.Mobile.Master.designer.cs">
       <DependentUpon>Site.Mobile.Master</DependentUpon>
     </Compile>
+    <Compile Include="StaffLogin.aspx.cs">
+      <DependentUpon>StaffLogin.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="StaffLogin.aspx.designer.cs">
+      <DependentUpon>StaffLogin.aspx</DependentUpon>
+    </Compile>
     <Compile Include="StaffSearch.aspx.cs">
       <DependentUpon>StaffSearch.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -431,6 +442,13 @@
       <DependentUpon>StaffSearch.aspx</DependentUpon>
     </Compile>
     <Compile Include="Startup.cs" />
+    <Compile Include="SurveyCompleted.aspx.cs">
+      <DependentUpon>SurveyCompleted.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="SurveyCompleted.aspx.designer.cs">
+      <DependentUpon>SurveyCompleted.aspx</DependentUpon>
+    </Compile>
     <Compile Include="TextQuestionController.ascx.cs">
       <DependentUpon>TextQuestionController.ascx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

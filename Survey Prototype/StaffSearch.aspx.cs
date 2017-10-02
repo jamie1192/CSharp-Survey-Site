@@ -13,6 +13,12 @@ namespace Survey_Prototype
         protected void Page_Load(object sender, EventArgs e)
         {
 
+            if (!AppSession.IsLoggedIn()) //redirect to login page if no user is logged in
+            {
+                Response.Redirect("~/StaffLogin.aspx");
+                return;
+            }
+
             DataTable dt = new DataTable();
             dt.Columns.Add("UID");
             dt.Columns.Add("First Name");
