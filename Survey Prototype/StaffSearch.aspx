@@ -9,23 +9,23 @@
         <div class="searchBoxesContainer">
             <div class="bankCheckBoxes">
                 <asp:CheckBoxList  ID="bankCheckBoxList" runat="server">
-                    <asp:ListItem Value="Westpac" Text="Westpac" ></asp:ListItem>
-                    <asp:ListItem Value="ANZ" Text="ANZ" ></asp:ListItem>
-                    <asp:ListItem Value="ING" Text="ING"></asp:ListItem>
+                    <asp:ListItem Value="17" Text="Westpac" ></asp:ListItem>
+                    <asp:ListItem Value="19" Text="ANZ" ></asp:ListItem>
+                    <asp:ListItem Value="21" Text="ING"></asp:ListItem>
                 </asp:CheckBoxList>
             </div>
 
             <div class="newspapersCheckBoxList">
-                <asp:CheckBoxList ID="newspaperCheckBoxList" runat="server">
-                    <asp:ListItem Value= "The Daily Telegraph" Text="The Daily Telegraph"></asp:ListItem>
-                    <asp:ListItem Value= "The Betoota Advocate" Text="The Betoota Advocate"></asp:ListItem>
+                <asp:CheckBoxList ID="bankServiceCheckBoxList" runat="server">
+                    <asp:ListItem Value= "48" Text="Internet Banking"></asp:ListItem>
+                    <asp:ListItem Value= "49" Text="Home Loan"></asp:ListItem>
                 </asp:CheckBoxList>
             </div>
 
             <div class="genderCheckBoxes">
                 <asp:CheckBoxList ID="genderCheckBoxList" runat="server">
-                    <asp:ListItem Value="Male" Text="Male"></asp:ListItem>
-                    <asp:ListItem Value="Female" Text="Female"></asp:ListItem>
+                    <asp:ListItem Value="1" Text="Male"></asp:ListItem>
+                    <asp:ListItem Value="2" Text="Female"></asp:ListItem>
                 </asp:CheckBoxList>
             </div>
         </div>

@@ -149,7 +149,7 @@
 
 .GridView th {
     background-color: #8eb0ed;
-    width: 180px;
+    width: 240px;
     padding-left: 2px;
 }
 
@@ -247,9 +247,6 @@
     margin: 30px;
 }
 
-.staffLoginTitle {
-
-}
 
 .loginButtonContainer {
     margin-right: 30px;

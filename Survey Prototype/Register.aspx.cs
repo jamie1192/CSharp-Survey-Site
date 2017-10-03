@@ -43,6 +43,8 @@ namespace Survey_Prototype
             string registerUserQuery = "UPDATE userTable SET firstName=@firstName, lastname=@lastName, phoneNumber=@phone, dob=@dob WHERE u_Id=@u_Id;";
 
             SqlCommand registerUser = new SqlCommand(registerUserQuery, connection);
+
+            //Pass values as SqlParameters to prevent SQL injection
             registerUser.Parameters.Add(new SqlParameter("firstName", firstName));
             registerUser.Parameters.Add(new SqlParameter("lastName", lastName));
             registerUser.Parameters.Add(new SqlParameter("phone", phoneNumber));
@@ -64,7 +66,6 @@ namespace Survey_Prototype
 
         }
 
-
         private static SqlConnection ConnectToDatabase()
         {
             string connectionString = ConfigurationManager.ConnectionStrings["Database"].ToString();
@@ -83,7 +84,5 @@ namespace Survey_Prototype
 
             return connection;
         }
-
-        
     }
 }
