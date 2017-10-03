@@ -29,18 +29,26 @@ namespace Survey_Prototype
             findUser.Parameters.Add(new SqlParameter("username", username));
             findUser.Parameters.Add(new SqlParameter("password", password));
 
-            SqlDataReader reader = findUser.ExecuteReader();
-
-            if (reader.Read()) //login is correct
+            try
             {
-                string staffUsername = reader["username"].ToString();
-                AppSession.setUsername(staffUsername);
+                SqlDataReader reader = findUser.ExecuteReader();
 
-                connection.Close();
-                Response.Redirect("~/StaffSearch.aspx");
+                if (reader.Read()) //login is correct
+                {
+                    string staffUsername = reader["username"].ToString();
+                    AppSession.setUsername(staffUsername);
+
+                    connection.Close();
+                    Response.Redirect("~/StaffSearch.aspx");
+                }
+                else //incorrect credentials provided
+                { 
+                    loginErrorMessage.Text = "Username and/or password incorrect!";
+                }
             }
-            else{ //incorrect credentials provided
-                loginErrorMessage.Text = "Username and/or password incorrect!";
+            catch(Exception err)
+            {
+                System.Console.Write("Database/connection error: " + err);
             }
         }
 

@@ -13,8 +13,7 @@ namespace Survey_Prototype
     {
         CheckBoxList debugList = new CheckBoxList();
         int questionType;
-        //bool finishedSurvey;
-
+        
         protected void Page_Load(object sender, EventArgs e)
         {
             if (AppSession.getSurveyCompletedStatus())
@@ -93,7 +92,6 @@ namespace Survey_Prototype
                                     string currentA_Id = optionReader["a_Id"].ToString();
                                     followUpID = optionReader["fq_Id"].ToString();
                                     HttpContext.Current.Session[currentA_Id] = followUpID; //filthy workaround to store fq_Id's by its answer_Id
-                                    //item.Attributes.Add("data-value", followUpID);
                                 }
 
                                 int currentAnswerId = Convert.ToInt32(optionReader["a_Id"]);
@@ -139,47 +137,42 @@ namespace Survey_Prototype
                     }
 
                     else if (questionType == 4) //radio 
+                    {
+                        RadioQuestionController radioController = (RadioQuestionController)LoadControl("~/RadioQuestionController.ascx");
+
+                        radioController.ID = "radioQuestionController";
+                        radioController.QuestionLabel.Text = questionText;
+
+                        SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
+
+                        //run command
+                        try
                         {
-                            RadioQuestionController radioController = (RadioQuestionController)LoadControl("~/RadioQuestionController.ascx");
+                            SqlDataReader optionReader = optionCommand.ExecuteReader();
 
-                            radioController.ID = "radioQuestionController";
-                            radioController.QuestionLabel.Text = questionText;
-
-                            SqlCommand optionCommand = new SqlCommand("SELECT * FROM answerOptionTable WHERE answerOptionTable.q_Id = " + currentQuestion, connection);
-
-                            //run command
-                            try
+                            //loop through all results
+                            while (optionReader.Read())
                             {
-                                SqlDataReader optionReader = optionCommand.ExecuteReader();
-
-                                //loop through all results
-                                while (optionReader.Read())
-                                {
-                                    ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
-                                    radioController.RadioQuestionList.Items.Add(item);
-                                    //radioTemplate.Add(item);
-                                }
-
-                                QuestionPlaceholder.Controls.Add(radioController);
+                                ListItem item = new ListItem(optionReader["answerText"].ToString(), optionReader["a_Id"].ToString());
+                                radioController.RadioQuestionList.Items.Add(item);
                             }
-                            catch (Exception err)
-                            {
-                                Console.Write("Database/connection error: " + err);
-                            }
+                            QuestionPlaceholder.Controls.Add(radioController);
                         }
-                //}
+                        catch (Exception err)
+                        {
+                            Console.Write("Database/connection error: " + err);
+                        }
+                    }
+           
             }
             connection.Close();
         }
 
         private static int GetCurrentQuestionNumber()
         {
-            //TODO FIX this
-            int currentQuestion = 0; // old example answer
+            int currentQuestion = 0; 
 
-            //just some default value TODO: get start qNum from DB
-            //check if question number stored in session
-            if (HttpContext.Current.Session["questionNumber"] == null)//no?
+            if (HttpContext.Current.Session["questionNumber"] == null)//start of survey
             {
                 SqlConnection connection = ConnectToDatabase();
                 SqlCommand getFirstQuestion = new SqlCommand("SELECT TOP 1 * FROM questionTable; ", connection);
@@ -199,21 +192,11 @@ namespace Survey_Prototype
                 }
                 connection.Close();
             }
-            //HttpContext.Current.Session["questionNumber"] = 1; //set for first time
-            else //retrieve it from current session
+            
+            else //retrieve survey progress from session
             {
-                //if(HttpContext.Current.Session["followUpQuestions"] != null) //check for follow up q's
-                //{
-                //    List<string> followUpList = (List<string>)HttpContext.Current.Session["followUpQuestions"];
-                //    currentQuestion = Convert.ToInt32(followUpList[0]); //set first queued followUp as current question
-                //    followUpList.RemoveAt(0); //remove this follow up from the queue
-                //    HttpContext.Current.Session["followUpQuestions"] = followUpList; //append the session-stored followUp list
-                //}
-                //else
-                //{
-                    int nextQuestion = (int)HttpContext.Current.Session["questionNumber"]; //get next question that was set when question was generated   
-                    currentQuestion = nextQuestion;
-                //}
+                int nextQuestion = (int)HttpContext.Current.Session["questionNumber"]; //get next question that was set when question was generated   
+                currentQuestion = nextQuestion;
             }
             return currentQuestion;
         }
@@ -245,7 +228,6 @@ namespace Survey_Prototype
                 TextQuestionController ch = (TextQuestionController)QuestionPlaceholder.FindControl("TextQuestionController");
 
                 int currentQuestion = (int)HttpContext.Current.Session["questionNumber"];
-                //List<questionData> storedAnswers = new List<questionData>();
 
                 if (HttpContext.Current.Session["userAnswers"] != null) //if there are saved answers from previous q's
                 {
@@ -295,7 +277,7 @@ namespace Survey_Prototype
                             {
                                 if (followUpQuestionList.Count > 0) //if there's already a queue of followUps waiting
                                 {
-                                    if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //if the followUpQuestion isn't already queued
+                                    if(followUpQuestionList[0] != HttpContext.Current.Session[chk.Value].ToString()) //if the followUpQuestion isn't already queued (don't duplicate question)
                                         followUpQuestionList.Add(HttpContext.Current.Session[chk.Value].ToString());
                                 }
                                 else 
@@ -391,15 +373,13 @@ namespace Survey_Prototype
                 
                 //create user and get u_Id
                 string cmd = "INSERT INTO userTable (ipAddress) VALUES ('" + ipAddress + "');SELECT CAST(scope_identity() AS int)";
-                //run query
+                
                 SqlCommand insertUser = new SqlCommand(cmd, connection);
-                //get newly created u_Id
-                int newUser_Id = (int)insertUser.ExecuteScalar();
-                //store in session
-                //HttpContext.Current.Session["u_Id"] = newUser_Id;
-                AppSession.setResponderUserId(newUser_Id);
+                
+                int newUser_Id = (int)insertUser.ExecuteScalar(); //get newly created u_Id
+                
+                AppSession.setResponderUserId(newUser_Id); //store in session
 
-                //get u_ID (save to session to update user details if they register)
                 //save answers from survey
                 List<questionData> getAnswers = (List<questionData>)HttpContext.Current.Session["userAnswers"];
 
@@ -467,9 +447,9 @@ namespace Survey_Prototype
                     return address[0];
                 }
             }
-            //if not proxy, get nice ip and return
+            
             //ACROSS WEB HTTP REQUEST
-            ipAddress = context.Request.UserHostAddress;//ServerVariables["REMOTE_ADDR"];
+            ipAddress = context.Request.UserHostAddress;
 
             if (ipAddress.Trim() == "::1")//ITS LOCAL(either lan or on same machine), CHECK LAN IP INSTEAD
             {

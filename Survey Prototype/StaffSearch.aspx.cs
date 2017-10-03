@@ -141,12 +141,12 @@ namespace Survey_Prototype
 
                     searchResultsGridView.DataSource = dt;
                     searchResultsGridView.DataBind();
-                    connection.Close();
                 }
                 catch(Exception err)
                 {
                     System.Console.Write("Database/connection error: " + err);
                 }
+                connection.Close();
             }
 
             else //no search criteria selected, just return all respondants
@@ -178,15 +178,14 @@ namespace Survey_Prototype
 
                     searchResultsGridView.DataSource = dt;
                     searchResultsGridView.DataBind();
-                    connection.Close();
                 }
                 catch(Exception err)
                 {
                     System.Console.Write("Database/connection error: " + err);
                 }
+                connection.Close();
             }
         }
-
 
         private static SqlConnection ConnectToDatabase()
         {
@@ -204,8 +203,5 @@ namespace Survey_Prototype
 
             return connection;
         }
-
-
-
     }
 }
