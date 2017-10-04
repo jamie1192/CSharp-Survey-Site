@@ -32,7 +32,7 @@ namespace Survey_Prototype
             
             DataRow myRow;
 
-            string loadUsers = "SELECT * FROM userTable;";
+            string loadUsers = "SELECT * FROM userTable ORDER BY lastName ASC;";
 
             SqlCommand getUsersQuery = new SqlCommand(loadUsers, connection);
 
@@ -87,6 +87,13 @@ namespace Survey_Prototype
                     selected.Add(item);
                 }
             }
+            foreach (ListItem item in newspaperCheckBoxList.Items) //Selected newspaper to search for
+            {
+                if (item.Selected)
+                {
+                    selected.Add(item);
+                }
+            }
 
             if (selected != null) //search criteria selected
             {
@@ -107,7 +114,7 @@ namespace Survey_Prototype
                     selectedCount++;
                 }
 
-                staffSearchQuery += ");";
+                staffSearchQuery += ") ORDER BY lastName ASC;";
                 SqlCommand search = new SqlCommand(staffSearchQuery, connection);
 
                 for (int i = 0; i < selectedCount; i++)

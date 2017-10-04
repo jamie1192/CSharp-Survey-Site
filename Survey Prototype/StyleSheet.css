@@ -161,27 +161,34 @@
 .searchBoxesContainer {
     width: auto;
     position: relative;
-    height: auto;
+    height: 200px;
 }
 
 .bankCheckBoxes {
     height: auto;
     float: left;
-    width: 140px;
+    width: 25%;
+    padding: 30px;
+}
+
+.bankServicesCheckBoxList {
+    height: auto;
+    width: 25%;
+    float: right;
     padding: 30px;
 }
 
 .genderCheckBoxes {
     padding: 30px;
-    width: 150px;
-    margin: 0 auto;
+    float: left;
+    width: 25%;
 }
 
-.newspapersCheckBoxList {
+.newspaperCheckBoxList {
     padding: 30px;
-    top: 0;
-    height: auto;
     float: right;
+    width: 25%;
+    height: auto;
 }
 
 .staffSearchButton {
